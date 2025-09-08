@@ -1,0 +1,93 @@
+All login test cases included (10 total)
+
+valid Login() — Valid login; verifies dashboard/accounts overview and then logs out.
+
+invalid Login - Wrong Password() — Wrong password shows error.
+
+invalid Login Wrong User() — Nonexistent username shows error.
+
+empty Credentials() — Empty username & password shows error.
+
+multiple Invalid Attempts() — Repeated wrong attempts produce error / lockout message.
+
+valid Login With Uppercase Username() — Uppercase username currently fails (test reflects current behavior).
+
+login Without Password() — Missing password shows error.
+
+logout After Login() — Login then logout; verifies login page/content appears after logout.
+
+valid Login With Uppercase Password() — Uppercase Password currently fails (test reflects current behavior).
+
+login Without Username() — Missing password shows error.
+====================================================================
+Now Loan Test Cases List (9)
+
+apply Valid Loan – Apply a valid loan and verify result.
+
+apply Loan Exceeding Balance – Apply loan greater than balance.
+
+apply Loan Zero Down Payment – Loan with 0 down payment.
+
+apply Loan Invalid Input – Non-numeric inputs (abc/xyz).
+
+apply Minimum Loan Amount – Apply very small loan.
+
+apply Maximum Loan Amount – Apply very large loan.
+
+apply Loan Empty Fields – Submit without filling fields.
+
+apply Loan Down Payment Greater than Amount – Invalid case.
+
+apply Loan Multiple Loans Limit – Check max concurrent loans.
+
+=================================================================
+
+🔄 Transfer Tests (7 total now)
+
+ParameterizedTransfers
+
+Valid transfer
+
+Small transfer (like $1)
+
+Invalid transfer (e.g., to a non-existing account)
+
+Negative amount transfer
+
+Exceeding balance transfer
+
+transferNegativeAmount (explicit)
+
+Try transferring a negative amount; expect rejection.
+
+transferInvalidAccounts (explicit)
+
+Try transferring between non-existent accounts; expect error.
+
+==============================================
+
+💰 Balance Tests (1)
+
+balanceAfterDeposit
+
+After a deposit, check Accounts Overview shows updated balance.
+
+==================================================================================
+
+📜 Transaction Tests (3)
+
+recentTransferAppearsInHistory
+
+Verify a newly made transfer shows up in history.
+
+searchByAmount
+
+Search by amount field → expect results.
+
+searchByDate
+
+Search by date range → expect results or “no transactions” message.
+
+
+
+
