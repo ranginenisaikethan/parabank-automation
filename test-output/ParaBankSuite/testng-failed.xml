@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite thread-count="6" parallel="classes" name="Failed suite [ParaBankSuite]">
+  <test thread-count="6" parallel="classes" name="ParaBankTests(failed)">
+    <parameter name="browser" value="chrome"/>
+    <classes>
+      <class name="com.parabank.tests.LoginTests">
+        <methods>
+          <include name="loginWithoutPassword"/>
+          <include name="setUp"/>
+          <include name="tearDown"/>
+        </methods>
+      </class> <!-- com.parabank.tests.LoginTests -->
+    </classes>
+  </test> <!-- ParaBankTests(failed) -->
+</suite> <!-- Failed suite [ParaBankSuite] -->

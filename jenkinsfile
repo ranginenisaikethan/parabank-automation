@@ -1,0 +1,114 @@
+// Jenkinsfile (Declarative Pipeline)
+// Place at repository root as "Jenkinsfile"
+pipeline {
+  agent any
+
+  // Optional parameters for quick toggles from Jenkins UI
+  parameters {
+    string(name: 'BROWSER', defaultValue: 'chrome', description: 'Browser to use (chrome/firefox/edge). Tests should honor this via system property or env)')
+    booleanParam(name: 'HEADLESS', defaultValue: true, description: 'Run browser in headless mode if supported by tests')
+  }
+
+  // Tools: configure these names in Jenkins -> Global Tool Configuration
+  tools {
+    // Replace with the names you configured in Jenkins
+    jdk 'jdk11'          // e.g. name of JDK installation
+    maven 'maven-3.8.6'  // e.g. name of Maven installation
+  }
+
+  environment {
+    // You can use these in your tests (System.getProperty or System.getenv)
+    BROWSER = "${params.BROWSER}"
+    HEADLESS = "${params.HEADLESS}"
+    // location of surefire xml results
+    TEST_RESULTS = 'target/surefire-reports/*.xml'
+    SCREENSHOT_DIR = 'screenshots/**'
+  }
+
+  options {
+    // keep some logs and allow pipeline to be retried
+    timestamps()
+    buildDiscarder(logRotator(daysToKeepStr: '14', numToKeepStr: '50'))
+    // optionally disable concurrent builds of same job
+    disableConcurrentBuilds()
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Prepare') {
+      steps {
+        script {
+          // Print useful info
+          echo "Running on ${env.NODE_NAME} (isUnix=${isUnix()})"
+          echo "Branch: ${env.BRANCH_NAME ?: 'N/A'}"
+          echo "Browser: ${env.BROWSER}, Headless: ${env.HEADLESS}"
+        }
+      }
+    }
+
+    stage('Build & Test') {
+      steps {
+        script {
+          if (isUnix()) {
+            // export optional system properties so tests can read them
+            sh """
+              mvn -B -DskipTests=false -DBROWSER='${env.BROWSER}' -DHEADLESS='${env.HEADLESS}' test
+            """
+          } else {
+            bat """
+              mvn -B -DskipTests=false -DBROWSER="${env.BROWSER}" -DHEADLESS="${env.HEADLESS}" test
+            """
+          }
+        }
+      }
+      // always attempt to collect results and artifacts even if mvn fails
+      post {
+        always {
+          script {
+            // Publish TestNG / Surefire results
+            junit allowEmptyResults: true, testResults: "${env.TEST_RESULTS}"
+
+            // Archive screenshots and any artifacts
+            archiveArtifacts artifacts: "${env.SCREENSHOT_DIR}", allowEmptyArchive: true
+
+            // Also archive surefire xmls for debug (optional)
+            archiveArtifacts artifacts: 'target/surefire-reports/*.xml', allowEmptyArchive: true
+          }
+        }
+      }
+    }
+
+    stage('Optional: Generate HTML Report') {
+      when {
+        expression { fileExists('target/surefire-reports') }
+      }
+      steps {
+        echo "If you generate HTML reports (Allure/Extent), publish them here."
+        // Example: publish HTML plugin if you have html report output
+        // publishHTML([...])
+      }
+    }
+  } // stages
+
+  post {
+    success {
+      echo "Build succeeded."
+    }
+    unstable {
+      echo "Build unstable - some tests failed."
+    }
+    failure {
+      echo "Build failed."
+    }
+    always {
+      // Cleanup workspace optionally
+      // cleanWs()
+      echo "Finished pipeline for ${env.JOB_NAME}"
+    }
+  }
+}

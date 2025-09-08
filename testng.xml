@@ -1,0 +1,12 @@
+<suite name="ParaBankSuite" parallel="classes" thread-count="6">
+    <test name="ParaBankTests">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="com.parabank.tests.LoginTests"/>
+            <class name="com.parabank.tests.TransferTests"/>
+            <class name="com.parabank.tests.TransactionTests"/>
+            <class name="com.parabank.tests.BalanceTests"/>
+            <class name="com.parabank.tests.LoanTests"/>
+        </classes>
+    </test>
+</suite>
